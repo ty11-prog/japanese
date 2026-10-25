@@ -142,7 +142,7 @@ test('Japanese voice and natural-speed preferences persist without changing lear
   await expect(page.getByRole('combobox', { name: '日文聲音' })).toHaveValue('uri:local-ja');
   await expect(page.getByRole('combobox', { name: '預設語速' })).toHaveValue('1.1');
   await navigate(page, info, '學習足跡');
-  await expect(page.locator('.progress-stat').filter({ hasText: '已接觸的單字' }).locator('strong')).toHaveText('1 / 100');
+  await expect(page.locator('.progress-stat').filter({ hasText: '已接觸的單字' }).locator('strong')).toHaveText(`1 / ${vocabulary.length}`);
 });
 
 test('example audio uses original Japanese, offers slow playback and ignores user cancellation', async ({ page }, info) => {

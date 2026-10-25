@@ -4,7 +4,7 @@ import { annotatedExamples, exampleFurigana } from '../src/data/furigana';
 import { maskFurigana, parseFurigana, plainSentence } from '../src/lib/furigana';
 
 describe('curated example readings', () => {
-  it('covers all 100 existing examples without changing any original text', () => {
+  it('covers every bundled example without changing any original text', () => {
     expect(Object.keys(annotatedExamples).sort()).toEqual(vocabulary.map((word) => word.id).sort());
     for (const word of vocabulary) {
       const parts = exampleFurigana[word.id];

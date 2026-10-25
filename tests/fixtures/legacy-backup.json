@@ -1,0 +1,27 @@
+{
+  "format": "kotoba-n3-backup",
+  "version": 1,
+  "state": {
+    "schemaVersion": 1,
+    "progress": {
+      "shitaku": {
+        "wordId": "shitaku",
+        "introducedAt": "2026-10-01T04:00:00.000Z",
+        "lastReviewedAt": "2026-10-05T04:00:00.000Z",
+        "dueAt": "2026-10-12T04:00:00.000Z",
+        "intervalDays": 7,
+        "attempts": 3,
+        "correctCount": 3,
+        "correctStreak": 3,
+        "lapses": 0
+      }
+    },
+    "reviews": [
+      { "id": "1790827200000-0-shitaku", "wordId": "shitaku", "reviewedAt": "2026-10-01T04:00:00.000Z", "correct": true, "rating": "good", "intervalDays": 1 },
+      { "id": "1790913600000-1-shitaku", "wordId": "shitaku", "reviewedAt": "2026-10-02T04:00:00.000Z", "correct": true, "rating": "good", "intervalDays": 3 },
+      { "id": "1791172800000-2-shitaku", "wordId": "shitaku", "reviewedAt": "2026-10-05T04:00:00.000Z", "correct": true, "rating": "good", "intervalDays": 7 }
+    ],
+    "settings": { "dailyNewLimit": 8, "dailyMinutes": 15 },
+    "updatedAt": "2026-10-05T04:00:00.000Z"
+  }
+}

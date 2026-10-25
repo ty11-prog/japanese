@@ -3,6 +3,8 @@
  * Level labels are approximate, not an official JLPT vocabulary list.
  * See docs/content-sources.md for provenance and review limitations.
  */
+import { expandedVocabulary } from './expanded-vocabulary';
+
 export interface Word {
   id: string;
   word: string;
@@ -36,7 +38,7 @@ export const vocabulary: Word[] = [
     "meaning": "外出",
     "partOfSpeech": "名詞・する動詞",
     "example": "雨が強いので、今日は外出を控えます。",
-    "translation": "因為雨很大，今天會減少外出。",
+    "translation": "因為雨很大，今天會盡量不外出。",
     "collocation": "外出を控える",
     "category": "日常生活"
   },
@@ -50,7 +52,7 @@ export const vocabulary: Word[] = [
     "translation": "包裹送到時，家人全都不在家。",
     "collocation": "留守にする",
     "category": "日常生活",
-    "note": "指家中或原本所在的地方沒有人，不是「休假」。"
+    "note": "指人暫時不在家，或不在原本應在的地方；不表示休假。"
   },
   {
     "id": "yachin",
@@ -388,7 +390,7 @@ export const vocabulary: Word[] = [
     "meaning": "提交；繳交",
     "partOfSpeech": "名詞・する動詞",
     "example": "レポートは、金曜日までにオンラインで提出してください。",
-    "translation": "報告請在週五以前透過網路繳交。",
+    "translation": "報告請最晚於週五透過網路繳交。",
     "collocation": "レポートを提出する",
     "category": "工作學習"
   },
@@ -412,7 +414,8 @@ export const vocabulary: Word[] = [
     "example": "面接では、この会社で働きたい理由を聞かれました。",
     "translation": "面試時，我被問到想在這間公司工作的理由。",
     "collocation": "面接を受ける",
-    "category": "工作學習"
+    "category": "工作學習",
+    "note": "應試者參加面試常說「面接を受ける」；面試官替人面試則可說「応募者を面接する」。"
   },
   {
     "id": "shuushoku",
@@ -424,7 +427,7 @@ export const vocabulary: Word[] = [
     "translation": "大學畢業後，我進了家鄉的公司工作。",
     "collocation": "会社に就職する",
     "category": "工作學習",
-    "note": "開始進入職場用「就職」；換工作通常用「転職」。"
+    "note": "指受僱於公司等並開始工作；「会社に就職する」。換工作通常用「転職」。"
   },
   {
     "id": "kyuuryou",
@@ -533,8 +536,8 @@ export const vocabulary: Word[] = [
     "reading": "そんけい",
     "meaning": "尊敬；敬佩",
     "partOfSpeech": "名詞・する動詞",
-    "example": "最後まで約束を守る先輩を、尊敬しています。",
-    "translation": "我很敬佩總會遵守約定到底的前輩。",
+    "example": "いつも約束を守る先輩を、尊敬しています。",
+    "translation": "我很敬佩總是遵守約定的前輩。",
     "collocation": "先輩を尊敬する",
     "category": "情緒人際"
   },
@@ -614,7 +617,7 @@ export const vocabulary: Word[] = [
     "meaning": "不甘心；懊悔",
     "partOfSpeech": "い形容詞",
     "example": "一点差で試合に負けて、とても悔しかったです。",
-    "translation": "比賽只差一分就輸了，我非常不甘心。",
+    "translation": "以一分之差輸掉比賽，我非常不甘心。",
     "collocation": "悔しい思いをする",
     "category": "情緒人際",
     "note": "常因失敗、落敗或受到委屈而不甘心，與「悲しい」不同。"
@@ -751,8 +754,8 @@ export const vocabulary: Word[] = [
     "reading": "じんこう",
     "meaning": "人口",
     "partOfSpeech": "名詞",
-    "example": "この町では、若い人の人口が少しずつ減っています。",
-    "translation": "在這個城鎮，年輕人口正在逐漸減少。",
+    "example": "この町の人口は、少しずつ減っています。",
+    "translation": "這個城鎮的人口正在逐漸減少。",
     "collocation": "人口が増える",
     "category": "社會資訊"
   },
@@ -1156,5 +1159,6 @@ export const vocabulary: Word[] = [
     "collocation": "計画について話し合う",
     "category": "動作表達",
     "note": "表示彼此交換意見；單方面告知通常用「話す」「伝える」。"
-  }
+  },
+  ...expandedVocabulary.map(({ annotation: _annotation, ...word }) => word)
 ];

@@ -56,7 +56,7 @@ test('active recall records exactly one answer and progress survives reload', as
   await page.reload();
   await navigate(page, testInfo, '學習足跡');
   const touched = page.locator('.progress-stat').filter({ hasText: '已接觸的單字' });
-  await expect(touched.locator('strong')).toHaveText('1 / 100');
+  await expect(touched.locator('strong')).toHaveText(`1 / ${vocabulary.length}`);
   const state = await storedState(page);
   expect(state?.reviews).toHaveLength(1);
   expect(state?.progress[firstWord.id]).toMatchObject({ attempts: 1, correctCount: 1, intervalDays: 1 });
@@ -78,12 +78,12 @@ test('an incorrect answer is saved immediately and cannot be marked familiar', a
   expect(state?.reviews).toHaveLength(1);
 });
 
-test('all 100 words can be filtered, searched by kana, and opened with keyboard dismissal', async ({ page }, testInfo) => {
+test('all bundled words can be filtered, searched by kana, and opened with keyboard dismissal', async ({ page }, testInfo) => {
   await page.goto('/');
   await navigate(page, testInfo, '單字手帖');
-  await expect(page.locator('.word-row')).toHaveCount(100);
+  await expect(page.locator('.word-row')).toHaveCount(vocabulary.length);
   await page.getByRole('button', { name: '工作學習', exact: true }).click();
-  await expect(page.locator('.word-row')).toHaveCount(20);
+  await expect(page.locator('.word-row')).toHaveCount(vocabulary.filter((word) => word.category === '工作學習').length);
   const target = vocabulary.find((word) => word.category === '工作學習')!;
   await page.getByRole('textbox', { name: '搜尋單字' }).fill(target.reading);
   const row = page.locator('.word-row').filter({ has: page.getByText(target.word, { exact: true }) });
@@ -99,7 +99,7 @@ test('all 100 words can be filtered, searched by kana, and opened with keyboard 
   await page.getByRole('textbox', { name: '搜尋單字' }).fill('並不存在的單字xyz');
   await expect(page.getByRole('heading', { name: '還沒有找到這個單字' })).toBeVisible();
   await page.getByRole('button', { name: '顯示全部單字' }).click();
-  await expect(page.locator('.word-row')).toHaveCount(100);
+  await expect(page.locator('.word-row')).toHaveCount(vocabulary.length);
 });
 
 test('backup round-trip requires confirmation and rejects invalid files without overwriting progress', async ({ page }, testInfo) => {
@@ -150,7 +150,7 @@ test('production PWA reloads offline and continues saving learning progress', as
   await completeOneWord(page);
   await page.reload();
   await navigate(page, testInfo, '學習足跡');
-  await expect(page.locator('.progress-stat').filter({ hasText: '已接觸的單字' }).locator('strong')).toHaveText('1 / 100');
+  await expect(page.locator('.progress-stat').filter({ hasText: '已接觸的單字' }).locator('strong')).toHaveText(`1 / ${vocabulary.length}`);
   await context.setOffline(false);
 });
 
@@ -222,7 +222,7 @@ test('a stale second tab cannot overwrite progress saved by the first tab', asyn
   await practiceFromStaleLibrary('rusu');
   await staleTab.reload();
   await navigate(staleTab, testInfo, '學習足跡');
-  await expect(staleTab.locator('.progress-stat').filter({ hasText: '已接觸的單字' }).locator('strong')).toHaveText('1 / 100');
+  await expect(staleTab.locator('.progress-stat').filter({ hasText: '已接觸的單字' }).locator('strong')).toHaveText(`1 / ${vocabulary.length}`);
   await expect(staleTab.getByRole('alert')).toHaveCount(0);
   expect(await storedState(staleTab)).toEqual(baseline);
   await staleTab.close();
