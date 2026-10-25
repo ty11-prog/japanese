@@ -1,5 +1,7 @@
 # 言葉の庭 · N3 日文單字
 
+正式網站：[https://ty11-prog.github.io/japanese/](https://ty11-prog.github.io/japanese/)
+
 為具備 N4 基礎的繁體中文學習者設計的手機優先 PWA。以每天約 15 分鐘為起點，透過主動回想、情境練習與間隔複習，逐步累積能理解、能記得的日文。
 
 首版適合在單一裝置的 Chrome 使用，免登入、不需要後端或 API 金鑰。學習進度儲存在目前瀏覽器的 IndexedDB，不會上傳 GitHub 或其他雲端服務。
@@ -69,7 +71,7 @@ npm run test:e2e
 
 ## 部署
 
-已提供只供手動執行的 GitHub Pages workflow，包含安裝、單元測試、建置與部署。新增此檔案不會自行推送或發布網站；請依 [部署說明](docs/deployment.md) 設定並手動執行。
+網站已透過 GitHub Pages 發布。更新時先提交並推送程式碼，再手動執行 GitHub Pages workflow；流程包含安裝、單元測試、建置與部署，一般 push 不會自動發布。詳見 [部署說明](docs/deployment.md)。
 
 GitHub Pages 提供的是靜態網站。儲存庫或網站公開不會使手機的 IndexedDB 學習進度自動公開；網站檔案本身不得放入 token、密鑰或個人進度備份。私人儲存庫也不保證 Pages 網站是私人網站，實際可見性與可用性依 GitHub 方案及設定而定。
 
