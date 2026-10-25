@@ -489,7 +489,7 @@ button { transition: background .18s, color .18s, border-color .18s, transform .
   .word-main strong { font-size: 23px; }
   .word-main > span { font-size: 10px; }
   .word-definition { flex-basis: 100%; font-size: 11px; order: 4; gap: 8px; padding-right: 15px; }
-  .word-status { margin-left: auto; font-size: 8px; position: absolute; right: 36px; top: 27px; }
+  .word-row .word-status { margin-left: auto; font-size: 10px; position: absolute; right: 36px; top: 27px; }
   .row-chevron { position: absolute; right: 13px; top: 29px; width: 15px; }
   .content-note { font-size: 9px; line-height: 2; }
   .progress-stats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -694,6 +694,46 @@ button { transition: background .18s, color .18s, border-color .18s, transform .
   .offline-ready { font-size: 11px; }
   .alert { font-size: 12px; }
   .alert > button { font-size: 11px; }
+}
+/* Ruby keeps curated readings above the original sentence, including offline. */
+.example-block p, .context-question p { line-height: 2.65; }
+ruby { ruby-align: center; ruby-position: over; }
+rt { font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans JP', sans-serif; font-size: .56em; font-weight: 400; letter-spacing: .015em; color: #5b6b4e; line-height: 1.2; }
+.example-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.furigana-toggle { display: inline-flex; align-items: center; gap: 5px; color: #5b6b4e; font-size: 11px; border: 1px solid #dce3d1; background: #fffefa; border-radius: 5px; padding: 6px 9px; min-height: 34px; white-space: nowrap; }
+.furigana-toggle[aria-pressed="true"] { background: #e7eddc; border-color: #c9d5bc; }
+.furigana-toggle:hover { background: #e7eddc; }
+.example-playback { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 13px; border-top: 1px solid #e0e7d6; padding-top: 9px; }
+.example-playback button { display: inline-flex; align-items: center; gap: 6px; color: #5b6b4e; font-size: 11px; padding: 7px 10px; border-radius: 5px; min-height: 36px; }
+.example-playback button:hover { background: #e5ecd9; }
+.reading-card { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 22px; }
+.reading-card p { font-size: 12px; line-height: 1.9; color: #5b6b4e; margin: 0; }
+.preference-switch { display: flex; align-items: center; gap: 10px; white-space: nowrap; padding: 10px 0 10px 10px; min-height: 44px; }
+.preference-switch > span { display: inline-block; width: 39px; height: 23px; border-radius: 20px; background: #d7dcd0; position: relative; }
+.preference-switch > span::after { position: absolute; content: ''; top: 3px; left: 3px; width: 17px; height: 17px; background: #fffefa; border-radius: 50%; box-shadow: 0 1px 2px #28322020; transition: transform .18s; }
+.preference-switch.enabled > span { background: #758969; }
+.preference-switch.enabled > span::after { transform: translateX(16px); }
+.preference-switch strong { font-size: 12px; font-weight: 500; color: #5b6b4e; }
+.speech-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.speech-options .field-label { margin-bottom: 0; }
+.speech-options select { width: 100%; min-width: 0; max-width: 100%; border: 1px solid #dce2d3; padding: 11px 10px; border-radius: 6px; color: #536849; background: #fffefa; font-size: 12px; min-height: 44px; }
+.speech-options label:not(:first-child) { margin-top: 9px; }
+.speech-current { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 16px; color: #647654; font-size: 11px; line-height: 1.8; }
+.speech-current svg { margin-top: 2px; }
+.speech-current span { overflow-wrap: anywhere; }
+.speech-fallback { color: #746447; font-size: 11px; line-height: 1.9; margin: 14px 0 0; }
+@media (max-width: 760px) {
+  rt { font-size: .55em; }
+  .example-block p, .context-question p { font-size: 20px; line-height: 2.7; }
+  .example-block > span:not(.mini-label) { padding-right: 0; }
+  .furigana-toggle { font-size: 12px; min-height: 38px; }
+  .example-playback button { font-size: 13px; min-height: 44px; }
+  .reading-card { grid-column: auto; flex-wrap: wrap; gap: 13px; }
+  .reading-card p { font-size: 13px; }
+  .preference-switch { margin-left: auto; }
+  .preference-switch strong { font-size: 13px; }
+  .speech-options select { font-size: 16px; }
+  .speech-current, .speech-fallback { font-size: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
