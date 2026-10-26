@@ -750,9 +750,10 @@ rt { font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans JP', sans-serif;
 @media (min-width: 761px) and (max-width: 1024px) { .desktop-nav { gap: 16px; } .header-inner { gap: 14px; padding-left: 28px; padding-right: 28px; } .header-meta { gap: 10px; } .header-meta .avatar { display: none; } }
 @media (max-width: 760px) {
   .bottom-nav > button { flex: 1; min-width: 0; padding: 4px 2px; }
-  .grammar-home-entry { flex-wrap: wrap; padding: 19px; gap: 12px; }
+  .grammar-home-entry { display: grid; grid-template-columns: 39px minmax(0, 1fr); align-items: start; padding: 19px; gap: 12px; }
   .grammar-home-icon { width: 39px; height: 39px; }
+  .grammar-home-entry > div { grid-column: 2; }
   .grammar-home-entry h2 { font-size: 18px; }
   .grammar-home-entry p { font-size: 12px; }
-  .grammar-home-entry > button { margin-left: 51px; }
+  .grammar-home-entry > button { grid-column: 1 / -1; width: 100%; margin-left: 0; justify-content: space-between; }
 }
