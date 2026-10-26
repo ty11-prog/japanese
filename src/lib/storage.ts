@@ -112,12 +112,12 @@ function openDatabase(): Promise<IDBDatabase> {
 
 /** Missing state is distinct from an unreadable database. Never silently replace
  * a failed read with an empty state and overwrite the user's saved progress. */
-export async function loadState(): Promise<AppState | null> {
+async function loadStateAtKey(key: string): Promise<AppState | null> {
   const database = await openDatabase();
   try {
     const value = await new Promise<unknown>((resolve, reject) => {
       const transaction = database.transaction(STORE, 'readonly');
-      const request = transaction.objectStore(STORE).get(KEY);
+      const request = transaction.objectStore(STORE).get(key);
       transaction.oncomplete = () => resolve(request.result);
       transaction.onerror = () => reject(new Error('讀取進度失敗，請重新整理再試。'));
       transaction.onabort = () => reject(new Error('讀取進度中斷，原有資料未變更。'));
@@ -140,7 +140,7 @@ export class StorageConflictError extends Error {
  * across tabs. Undefined explicitly permits an unconditional write; null means
  * that no previous state should exist. Compare all validated canonical fields,
  * not just updatedAt, since two writes can share a millisecond timestamp. */
-export async function saveState(state: AppState, expectedState?: AppState | null): Promise<void> {
+async function saveStateAtKey(key: string, state: AppState, expectedState?: AppState | null): Promise<void> {
   const validated = validateState(state);
   const expected = expectedState === undefined ? undefined
     : expectedState === null ? null : JSON.stringify(validateState(expectedState));
@@ -153,7 +153,7 @@ export async function saveState(state: AppState, expectedState?: AppState | null
       transaction.oncomplete = () => resolve();
       transaction.onerror = () => reject(failure ?? new Error('進度未能儲存，請檢查可用空間並匯出備份。'));
       transaction.onabort = () => reject(failure ?? new Error('儲存進度中斷，請匯出備份後重試。'));
-      const request = store.get(KEY);
+      const request = store.get(key);
       request.onsuccess = () => {
         try {
           if (expected !== undefined) {
@@ -164,7 +164,7 @@ export async function saveState(state: AppState, expectedState?: AppState | null
               return;
             }
           }
-          store.put(validated, KEY);
+          store.put(validated, key);
         } catch (error) {
           failure = error instanceof Error ? error : new Error('儲存進度失敗，原有進度未變更。');
           transaction.abort();
@@ -174,12 +174,12 @@ export async function saveState(state: AppState, expectedState?: AppState | null
   } finally { database.close(); }
 }
 
-export async function resetState(): Promise<void> {
+async function resetStateAtKey(key: string): Promise<void> {
   const database = await openDatabase();
   try {
     await new Promise<void>((resolve, reject) => {
       const transaction = database.transaction(STORE, 'readwrite');
-      transaction.objectStore(STORE).delete(KEY);
+      transaction.objectStore(STORE).delete(key);
       transaction.oncomplete = () => resolve();
       transaction.onerror = () => reject(new Error('清除進度失敗，請稍後再試。'));
       transaction.onabort = () => reject(new Error('清除進度中斷，請稍後再試。'));
@@ -187,17 +187,35 @@ export async function resetState(): Promise<void> {
   } finally { database.close(); }
 }
 
-export function exportBackup(state: AppState): string {
-  return JSON.stringify({ format: 'kotoba-n3-backup', version: 1, state: validateState(state) }, null, 2);
+function exportBackupForFormat(format: string, state: AppState): string {
+  return JSON.stringify({ format, version: 1, state: validateState(state) }, null, 2);
 }
 
 /** Parse and validate only. Import must be explicitly confirmed in the UI, then
  * committed with saveState; this function never touches existing progress. */
-export function parseBackup(json: string, knownWordIds: readonly string[]): AppState {
+function parseBackupForFormat(format: string, json: string, knownWordIds: readonly string[]): AppState {
   if (typeof json !== 'string' || json.length > MAX_BACKUP_BYTES
       || new TextEncoder().encode(json).byteLength > MAX_BACKUP_BYTES) invalid();
   let parsed: unknown;
   try { parsed = JSON.parse(json); } catch { invalid(); }
-  if (!object(parsed) || parsed.format !== 'kotoba-n3-backup' || parsed.version !== 1) invalid();
+  if (!object(parsed) || parsed.format !== format || parsed.version !== 1) invalid();
   return validateState(parsed.state, knownWordIds);
 }
+
+/** Share validation and atomic snapshot checks while keeping each learning
+ * domain under its own existing-store key and its own backup envelope. */
+export function createProgressStore(
+  key: 'state' | 'grammar-state',
+  backupFormat: 'kotoba-n3-backup' | 'kotoba-n3-grammar-backup',
+) {
+  return {
+    loadState: (): Promise<AppState | null> => loadStateAtKey(key),
+    saveState: (state: AppState, expectedState?: AppState | null): Promise<void> => saveStateAtKey(key, state, expectedState),
+    resetState: (): Promise<void> => resetStateAtKey(key),
+    exportBackup: (state: AppState): string => exportBackupForFormat(backupFormat, state),
+    parseBackup: (json: string, knownIds: readonly string[]): AppState => parseBackupForFormat(backupFormat, json, knownIds),
+  };
+}
+
+// Preserve the vocabulary API and schema-1 records used by earlier releases.
+export const { loadState, saveState, resetState, exportBackup, parseBackup } = createProgressStore(KEY, 'kotoba-n3-backup');

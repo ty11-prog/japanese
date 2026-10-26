@@ -738,3 +738,21 @@ rt { font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans JP', sans-serif;
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+
+/* Give all five learning destinations a full touch target on narrow phones. */
+.grammar-tab-panel[hidden] { display: none !important; }
+.grammar-home-entry { display: flex; align-items: center; gap: 19px; padding: 23px 25px; margin-top: 24px; border: 1px solid #dfe4d5; border-radius: 12px; background: #eef1e6; }
+.grammar-home-icon { display: grid; place-items: center; width: 49px; height: 49px; flex-shrink: 0; background: #e0e7d6; color: #53664a; border-radius: 13px; }
+.grammar-home-entry > div { flex: 1; min-width: 0; }
+.grammar-home-entry h2 { font-family: var(--serif); font-size: 20px; font-weight: 500; margin: 8px 0; }
+.grammar-home-entry p { color: #5c6857; font-size: 12px; line-height: 1.9; margin-bottom: 0; }
+.grammar-home-entry > button { flex-shrink: 0; }
+@media (min-width: 761px) and (max-width: 1024px) { .desktop-nav { gap: 16px; } .header-inner { gap: 14px; padding-left: 28px; padding-right: 28px; } .header-meta { gap: 10px; } .header-meta .avatar { display: none; } }
+@media (max-width: 760px) {
+  .bottom-nav > button { flex: 1; min-width: 0; padding: 4px 2px; }
+  .grammar-home-entry { flex-wrap: wrap; padding: 19px; gap: 12px; }
+  .grammar-home-icon { width: 39px; height: 39px; }
+  .grammar-home-entry h2 { font-size: 18px; }
+  .grammar-home-entry p { font-size: 12px; }
+  .grammar-home-entry > button { margin-left: 51px; }
+}

@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState, type ChangeEvent, type ReactNode } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import {
   ArrowDownToLine, ArrowLeft, ArrowRight, ArrowUpFromLine, AudioLines,
-  BookOpen, BriefcaseBusiness, Check, CheckCircle2, ChevronRight, CircleHelp,
+  BookOpen, BookText, BriefcaseBusiness, Check, CheckCircle2, ChevronRight, CircleHelp,
   CloudOff, Download, Flame, Flower2, Headphones, Heart,
   House, Leaf, Lightbulb, MoreHorizontal, RefreshCw, Search,
   Settings2, ShieldCheck, Sparkles, Sprout, TrendingUp, Volume2, WifiOff, X,
@@ -10,15 +10,17 @@ import {
 import { vocabulary, type Word } from './data/vocabulary';
 import { exampleFurigana } from './data/furigana';
 import FuriganaText from './components/FuriganaText';
+import './grammar.css';
 import { getJapaneseVoices, parseSpeechPreferences, pickJapaneseVoice, voiceKey, type SpeechPreferences } from './lib/speech';
 import { createInitialState, getStats, getStudyPlan, recordReview, updateSettings, type AppState, type Rating } from './lib/learning';
 import { exportBackup, loadState, parseBackup, saveState, StorageConflictError } from './lib/storage';
 import { canBeDistractor } from './lib/questions';
 
-type Tab = 'home' | 'words' | 'progress' | 'settings';
+type Tab = 'home' | 'words' | 'grammar' | 'progress' | 'settings';
 type Mode = 'mixed' | 'listening';
 type Session = { ids: string[]; index: number; mode: Mode; results: boolean[]; repeated: string[]; seed: number };
 const wordIds = vocabulary.map((word) => word.id);
+const GrammarPage = lazy(() => import('./components/GrammarPage'));
 const wordMap = new Map(vocabulary.map((word) => [word.id, word]));
 const categories = ['日常生活', '工作學習', '情緒人際', '社會資訊', '動作表達'] as const;
 const categoryIcons = [House, BriefcaseBusiness, Heart, BookOpen, AudioLines];
@@ -26,6 +28,7 @@ const categoryDescriptions = ['把日子過成日文', '每一次進步，都算
 const tabs: { id: Tab; label: string; icon: typeof House }[] = [
   { id: 'home', label: '今日學習', icon: House },
   { id: 'words', label: '單字手帖', icon: BookOpen },
+  { id: 'grammar', label: '文法練習', icon: BookText },
   { id: 'progress', label: '學習足跡', icon: TrendingUp },
   { id: 'settings', label: '學習設定', icon: Settings2 },
 ];
@@ -120,6 +123,9 @@ export default function App() {
   const [tab, setTab] = useState<Tab>('home');
   const [storageError, setStorageError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [grammarOpened, setGrammarOpened] = useState(false);
+  const [grammarStorage, setGrammarStorage] = useState({ pending: false, blocked: false });
+  const grammarStorageRef = useRef(grammarStorage);
   const [toast, setToast] = useState('');
   const [online, setOnline] = useState(navigator.onLine);
   const [now, setNow] = useState(new Date());
@@ -192,6 +198,10 @@ export default function App() {
     clearTimeout(toastTimer.current);
     toastTimer.current = setTimeout(() => setToast(''), 4500);
   }
+  function updateGrammarStorage(status: { pending: boolean; blocked: boolean }) {
+    grammarStorageRef.current = status;
+    setGrammarStorage((previous) => previous.pending === status.pending && previous.blocked === status.blocked ? previous : status);
+  }
   function commit(next: AppState) {
     setState(next);
     if (readBlocked.current) return;
@@ -215,7 +225,7 @@ export default function App() {
       } else setStorageError('進度尚未成功寫入這台裝置。請先匯出備份，避免關閉頁面後遺失。');
     }).finally(() => { pendingSaves.current -= 1; setSaving(pendingSaves.current > 0); });
   }
-  function navigate(next: Tab) { setTab(next); setSummary(null); window.scrollTo({ top: 0, behavior: 'instant' }); }
+  function navigate(next: Tab) { if (next === 'grammar') setGrammarOpened(true); setTab(next); setSummary(null); window.scrollTo({ top: 0, behavior: 'instant' }); }
   function toggleFurigana() {
     const value = !showFurigana;
     setShowFurigana(value);
@@ -280,13 +290,13 @@ export default function App() {
     <main id="main-content" className={`main-container ${session ? 'session-container' : ''}`}>
       {storageError && <div className="alert warning" role="alert"><ShieldCheck size={19} /><span>{storageError}</span><button onClick={downloadBackup}>匯出備份</button></div>}
       {!online && <div className="offline-indicator"><WifiOff size={14} />離線學習中 · 進度會儲存在這台裝置</div>}
-      {needRefresh && !session && <div className="alert"><RefreshCw size={18} /><span>{storageError ? '新版本已準備好。請先處理儲存問題並匯出備份，再更新。' : '新版本已準備好，儲存完成後即可更新。'}</span><button disabled={Boolean(storageError) || saving} onClick={() => { void saveChain.current.then(() => { if (readBlocked.current || saveFailed.current) { notify('目前有未寫入的進度，請先匯出備份。'); return; } void updateServiceWorker(true); }); }}>更新網站</button></div>}
+      {needRefresh && !session && <div className="alert"><RefreshCw size={18} /><span>{storageError || grammarStorage.blocked ? '新版本已準備好。請先處理單字或文法的儲存問題並匯出備份，再更新。' : '新版本已準備好，儲存完成後即可更新。'}</span><button disabled={Boolean(storageError) || saving || grammarStorage.pending || grammarStorage.blocked} onClick={() => { void saveChain.current.then(() => { if (readBlocked.current || saveFailed.current || grammarStorageRef.current.pending || grammarStorageRef.current.blocked) { notify('目前有未寫入的進度，請先到單字設定或文法練習匯出備份。'); return; } void updateServiceWorker(true); }); }}>更新網站</button></div>}
 
       {session ? <StudySession key={`${session.mode}-${session.ids[0]}`} session={session} state={state} commit={commit} onChange={setSession} onFinish={finishSession} speak={speakWord} speechAvailable={speech.available} storageSafe={!storageError} showFurigana={showFurigana} toggleFurigana={toggleFurigana} /> : <>
         {tab === 'home' && <>
           <div className="page-eyebrow"><span className="little-dot" />給自己的 15 分鐘<span className="date-label">{dayLabel(now)}</span></div>
           <section className="home-hero">
-            <div className="hero-copy"><div className="eyebrow">A LITTLE EVERY DAY, A LITTLE CLOSER.</div><h1>讓日文，<br />慢慢成為<span className="title-emphasis">你的日常<svg viewBox="0 0 240 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8 Q112 -1 237 6" /></svg></span>。</h1><p>不用一次記住所有。<br className="mobile-break" />從今天的幾個單字，累積真正記得的日文。</p><div className="hero-tags"><span><Sprout size={15} />間隔複習</span><span><Lightbulb size={15} />主動回想</span><span><BookOpen size={15} />情境學習</span></div></div>
+            <div className="hero-copy"><div className="eyebrow">A LITTLE EVERY DAY, A LITTLE CLOSER.</div><h1>讓日文，<br />慢慢成為<span className="title-emphasis">你的日常<svg viewBox="0 0 240 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8 Q112 -1 237 6" /></svg></span>。</h1><p>不用一次記住所有。<br className="mobile-break" />從今天的單字和句子，累積真正記得的日文。</p><div className="hero-tags"><span><Sprout size={15} />間隔複習</span><span><Lightbulb size={15} />主動回想</span><span><BookOpen size={15} />情境學習</span></div></div>
             <div className="hero-art" aria-hidden="true"><div className="art-circle" /><span className="art-kana" lang="ja">こつこつ、<br />少しずつ。</span><div className="floating-card"><div className="floating-card-top"><span>今日のひとこと</span><Leaf size={18} /></div><span className="floating-reading" lang="ja">{featured.reading}</span><strong lang="ja">{featured.word}</strong><div className="floating-line" /><span className="floating-meaning">{featured.meaning}</span><span className="floating-example" lang="ja">小さな一歩を、毎日。</span></div><span className="art-spark one">✳</span><span className="art-spark two">＋</span><div className="art-caption">小小的累積，也是一種前進。</div></div>
           </section>
 
@@ -303,6 +313,8 @@ export default function App() {
               <div className="listening-card"><div className="listening-icon"><Headphones size={25} strokeWidth={1.6} /></div><span className="section-kicker">換個方式，記得更牢</span><h3>用耳朵，認識單字。</h3><p>聽見日文，再找出對應的單字。<br />讓記憶多一條回家的路。</p><button className="text-button" onClick={() => startSession('listening')}>開始聽音練習<ArrowRight size={16} /></button><small>{speech.available ? speech.localVoice ? '使用裝置日文語音，可離線發音' : '使用系統日文語音，可能需要連線' : '需裝置提供日文文字轉語音'}</small></div>
             </div>
           </section>
+
+          <section className="grammar-home-entry"><span className="grammar-home-icon"><BookText size={25} /></span><div><span className="section-kicker">把理解，再往前帶一點</span><h2>把單字，連成一句話。</h2><p>30 個文法、90 題練習。可從單字約 10 分鐘、文法約 5 分鐘開始，再依複習量調整。</p></div><button className="button secondary" onClick={() => navigate('grammar')}>開始文法練習<ArrowRight size={16} /></button></section>
 
           <section className="topics-section"><div className="section-heading"><h2>把單字，放進生活裡</h2><button className="text-button muted" onClick={() => { setCategory('全部'); navigate('words'); }}>全部 {stats.total} 詞<ArrowRight size={15} /></button></div><div className="topic-grid">{categories.map((item, index) => {
             const Icon = categoryIcons[index]; const words = vocabulary.filter((word) => word.category === item); const learned = words.filter((word) => state.progress[word.id]).length;
@@ -334,7 +346,7 @@ export default function App() {
         {tab === 'settings' && <>
           <PageIntro eyebrow="MAKE ROOM FOR A LITTLE JAPANESE" title="學習設定" description="找到適合你的節奏，讓學習走得更久。" />
           <div className="settings-grid"><section className="surface settings-card"><div className="settings-title"><Settings2 size={20} /><h2>每天的學習份量</h2></div><p>每天先複習，再認識新詞。待複習較多時，可以減少新詞。</p><label className="field-label" htmlFor="daily-limit">每日新單字上限</label><div className="goal-options" id="daily-limit" role="group" aria-label="每日新單字上限">{[4, 8, 12].map((value) => <button key={value} className={state.settings.dailyNewLimit === value ? 'goal-option active' : 'goal-option'} aria-pressed={state.settings.dailyNewLimit === value} onClick={() => { commit(updateSettings(state, { dailyNewLimit: value })); notify(`每日新詞上限已設為 ${value} 詞。`); }}><strong>{value}<small> 詞</small></strong><span>{value === 4 ? '輕鬆開始' : value === 8 ? '穩穩累積' : '多一點挑戰'}</span>{state.settings.dailyNewLimit === value && <CheckCircle2 size={15} />}</button>)}</div><div className="settings-note"><Lightbulb size={17} /><span>以每天約 15 分鐘為起點；複習次數和花費時間會因記憶狀況而不同。</span></div></section>
-          <section className="surface settings-card backup-card"><div className="settings-title"><ShieldCheck size={20} /><h2>這台裝置，就是你的手帖</h2></div><p>進度使用 IndexedDB 自動儲存在目前瀏覽器，不需要帳號。關閉網頁後仍會保留。</p><div className="save-status"><span className={`little-dot ${storageError ? 'error' : ''}`} />{storageError ? '儲存需要留意，請先備份' : saving ? '正在儲存…' : '本機儲存可用'}<span>沒有雲端同步</span></div><div className="backup-buttons"><button className="button secondary" onClick={downloadBackup}><ArrowDownToLine size={17} />匯出進度備份</button><button className="button secondary" onClick={() => fileInput.current?.click()}><ArrowUpFromLine size={17} />匯入備份</button></div><input ref={fileInput} type="file" accept="application/json,.json" onChange={(event) => { void importBackup(event); }} className="visually-hidden" aria-label="選擇進度備份檔" />{backupError && <p className="error-message" role="alert">{backupError}</p>}<div className="settings-note"><CircleHelp size={17} /><span>清除網站資料、無痕瀏覽、換瀏覽器或更換網址，可能無法保留原進度。建議定期匯出 JSON，放在手機或個人雲端空間。</span></div></section>
+          <section className="surface settings-card backup-card"><div className="settings-title"><ShieldCheck size={20} /><h2>單字進度備份</h2></div><p>單字進度自動儲存在目前瀏覽器，關閉網頁後仍會保留。此處匯出單字備份；文法備份請到「文法練習」。</p><div className="save-status"><span className={`little-dot ${storageError ? 'error' : ''}`} />{storageError ? '儲存需要留意，請先備份' : saving ? '正在儲存…' : '本機儲存可用'}<span>沒有雲端同步</span></div><div className="backup-buttons"><button className="button secondary" onClick={downloadBackup}><ArrowDownToLine size={17} />匯出進度備份</button><button className="button secondary" onClick={() => fileInput.current?.click()}><ArrowUpFromLine size={17} />匯入備份</button></div><input ref={fileInput} type="file" accept="application/json,.json" onChange={(event) => { void importBackup(event); }} className="visually-hidden" aria-label="選擇進度備份檔" />{backupError && <p className="error-message" role="alert">{backupError}</p>}<div className="settings-note"><CircleHelp size={17} /><span>清除網站資料、無痕瀏覽、換瀏覽器或更換網址，可能無法保留原進度。建議定期匯出 JSON，放在手機或個人雲端空間。</span></div></section>
           <section className="surface settings-card reading-card"><div><div className="settings-title"><BookOpen size={20} /><h2>例句漢字假名</h2></div><p>在漢字上方顯示讀音，先讀懂，再慢慢練習不看假名。填空題會一起遮住答案的讀音。</p></div><button className={`preference-switch ${showFurigana ? 'enabled' : ''}`} role="switch" aria-checked={showFurigana} aria-label="顯示例句假名" onClick={toggleFurigana}><span aria-hidden="true" /><strong>例句假名</strong></button></section>
           <section className="surface settings-card"><div className="settings-title"><Download size={20} /><h2>讓學習更順手</h2></div><p>把言葉の庭加入手機主畫面。首次載入並完成快取後，主要學習功能可離線使用。</p><button className="button secondary" onClick={() => { void install(); }}><Download size={17} />安裝／加入主畫面</button><div className="settings-note"><CloudOff size={17} /><span>{offlineReady || navigator.serviceWorker?.controller ? '網站資源已可離線使用。發音仍取決於裝置的日文語音。' : '離線資源會在正式版本首次連線載入時下載。'} 安裝功能需要 HTTPS。</span></div></section>
           <section className="surface settings-card speech-card">
@@ -362,6 +374,8 @@ export default function App() {
         </>}
       </>}
 
+      <div className="grammar-tab-panel" hidden={tab !== 'grammar' || Boolean(session)}>{grammarOpened && <Suspense fallback={<div className="grammar-loading" role="status">正在打開你的文法手帖…</div>}><GrammarPage showFurigana={showFurigana} toggleFurigana={toggleFurigana} speak={speakWord} onStorageStatus={updateGrammarStorage} /></Suspense>}</div>
+
       {!session && <footer className="site-footer"><span lang="ja">言葉の庭<span className="footer-divider">/</span>毎日、少しずつ。</span><span>用一點時間，種下一點日文。</span></footer>}
     </main>
 
@@ -372,7 +386,7 @@ export default function App() {
     {pendingImport && <Modal title="匯入前，先確認一下" onClose={() => setPendingImport(null)}><div className="import-preview"><ArrowUpFromLine size={30} /><h3>這份備份包含 {Object.keys(pendingImport.progress).length} 個已學單字</h3><p>{pendingImport.reviews.length} 次練習紀錄 · 備份更新於 {new Date(pendingImport.updatedAt).toLocaleString('zh-TW')}</p></div><p className="import-warning">匯入會取代目前裝置上的進度與設定，無法自動合併。建議先匯出目前的資料。</p><div className="modal-actions"><button className="button secondary" onClick={downloadBackup}>先匯出目前進度</button><button className="button primary" onClick={() => { readBlocked.current = false; commit(pendingImport); setPendingImport(null); notify('備份已載入，正在儲存到這台裝置。'); }}>確認取代並匯入</button></div></Modal>}
     {showInstallHelp && <Modal title="把日文，放在主畫面" onClose={() => setShowInstallHelp(false)}><div className="install-illustration"><div className="brand-mark"><Sprout size={38} /></div><span>言葉の庭</span></div><p>在 Android Chrome 開啟右上角的 <MoreHorizontal size={17} className="inline-icon" /> 選單，選擇「加入主畫面」或「安裝應用程式」。</p><p>若沒有安裝選項，請確認使用正式 HTTPS 網址並重新整理。iPhone Chrome 可在分享選單中尋找「加入主畫面」；若未提供，請用 Safari 開啟相同網址。</p><div className="settings-note"><ShieldCheck size={18} /><span>安裝後請從相同網址開啟，並定期匯出備份；不同瀏覽器的進度不會自動同步。</span></div></Modal>}
     {showSources && <Modal title="關於這本單字手帖" onClose={() => setShowSources(false)}><div className="prose"><h3>{stats.total} 個詞，慢慢累積</h3><p>本詞庫為本專案整理的代表性中級詞彙，N3 為參考分類，不是官方完整詞表，也不保證每詞只屬於 N3。單字寫法與讀音已與 JMdict 字典比對，例句、假名與繁中翻譯已交叉檢查；尚未經日語教師或母語者全面審訂。</p><h3>先回想，再看答案</h3><p>先嘗試回想意思，再透過辨義或情境題檢查理解。作答後依結果與自評調整間隔：答錯短時間後再練，答對則逐步拉長。同日或尚未到期的額外練習不會提升熟悉階段。這是可解釋的簡化排程，沒有宣稱能保證考試成績。</p><h3>發音與隱私</h3><p>發音由裝置的文字轉語音提供，部分語音可能連線到系統供應商。學習資料儲存在本機，沒有登入、分析追蹤或雲端上傳功能。</p><p><a className="inline-link" href="https://github.com/ty11-prog/japanese/blob/main/docs/content-sources.md" target="_blank" rel="noreferrer">查看詞庫來源與校訂紀錄</a></p></div></Modal>}
-    {offlineReady && !session && !selectedWord && !pendingImport && !showInstallHelp && !showSources && <div className="offline-ready" role="status"><CheckCircle2 size={16} /><span>手帖已準備好，可以離線學習了。</span><button className="icon-button" onClick={() => setOfflineReady(false)} aria-label="關閉離線準備通知"><X size={15} /></button></div>}
+    {offlineReady && tab !== 'grammar' && !session && !selectedWord && !pendingImport && !showInstallHelp && !showSources && <div className="offline-ready" role="status"><CheckCircle2 size={16} /><span>手帖已準備好，可以離線學習了。</span><button className="icon-button" onClick={() => setOfflineReady(false)} aria-label="關閉離線準備通知"><X size={15} /></button></div>}
   </>;
 }
 

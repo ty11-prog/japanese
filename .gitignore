@@ -9,5 +9,6 @@ test-results/
 coverage/
 artifacts/
 kotoba-backup-*.json
+kotoba-grammar-backup-*.json
 *.tsbuildinfo
 .DS_Store

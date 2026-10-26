@@ -1,4 +1,4 @@
-# 言葉の庭 · N3 日文單字
+# 言葉の庭 · N3 日文單字與文法
 
 正式網站：[https://ty11-prog.github.io/japanese/](https://ty11-prog.github.io/japanese/)
 
@@ -7,6 +7,9 @@
 首版適合在單一裝置的 Chrome 使用，免登入、不需要後端或 API 金鑰。學習進度儲存在目前瀏覽器的 IndexedDB，不會上傳 GitHub 或其他雲端服務。
 
 ## 已提供的功能
+
+- 獨立「文法練習」分頁：30 項文法、60 句假名例句及 90 題原創句意／接續／語境練習；逐題解說、每日推薦最多 6 新題與到期優先，每輪錯題最多加練一次。
+- 文法與單字進度分開保存、各自 JSON 備份；共用假名與語音偏好。可從單字約 10 分鐘、文法約 5 分鐘開始，詳見 [文法內容與學習方式](docs/grammar-content.md)。
 
 - 300 個代表性詞彙（原有 100 詞加上 200 詞，五類各 60 詞），涵蓋日常生活、工作學習、情緒人際、社會資訊與動作表達；包含讀音、詞性、繁中釋義、原創例句、翻譯與搭配。
 - 300 句例句皆提供漢字上方假名，可在例句或學習設定切換顯示，並保留這台裝置的偏好。填空題會連同答案的假名一起遮住。
@@ -86,6 +89,10 @@ src/styles.css              手機優先的響應式樣式
 src/data/vocabulary.ts      原有 100 詞與完整詞庫入口
 src/data/expansion/         新增 200 詞及對應例句假名
 src/data/quiz-exclusions.ts  近義詞干擾選項排除組
+src/data/grammar/           30 項文法、60 例句、90 題及假名
+src/components/GrammarPage.tsx 文法說明、練習與獨立備份
+src/lib/grammar.ts          文法逐題排程與統計
+src/lib/grammar-storage.ts  獨立文法進度與備份格式
 src/lib/learning.ts         複習排程與統計純函式
 src/lib/storage.ts          IndexedDB 與備份格式驗證
 public/                    PWA 圖示與靜態資產
