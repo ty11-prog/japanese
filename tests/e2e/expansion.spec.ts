@@ -57,7 +57,12 @@ test('expanded library has 300 cards, 60 per topic, and readable new examples in
     await row.click();
     const dialog = page.getByRole('dialog');
     await expect(dialog.getByRole('heading', { name: word.word, exact: true })).toBeVisible();
-    await expect(dialog.locator('.detail-reading')).toHaveText(word.reading);
+    const reading = await dialog.locator('.detail-word-line h3').evaluate((element) => {
+      const clone = element.cloneNode(true) as HTMLElement;
+      clone.querySelectorAll('ruby').forEach((ruby) => ruby.replaceWith(ruby.querySelector('rt')!.textContent!));
+      return clone.textContent;
+    });
+    expect(reading).toBe(word.reading);
     await expect(dialog.locator('.detail-meaning')).toContainText(word.meaning);
     await expect(dialog.locator('.part-of-speech')).toHaveText(word.partOfSpeech);
     await expect(dialog.getByText(word.collocation, { exact: true })).toBeVisible();

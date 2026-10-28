@@ -12,8 +12,8 @@ export default defineConfig({
       includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png'],
       manifest: {
         id: './',
-        name: '言葉の庭 · N3日文單字與文法',
-        short_name: '言葉の庭',
+        name: '拾語手帖 · N3日文單字與文法',
+        short_name: '拾語手帖',
         description: '每天十五分鐘，用主動回想與間隔複習，慢慢累積日文的力量。',
         lang: 'zh-Hant',
         start_url: './',

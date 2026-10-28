@@ -243,7 +243,7 @@ test('context questions supply a Chinese meaning clue and accept the matching Ja
   await page.getByRole('button', { name: '想好了，看看選項' }).click();
   await page.locator('.answer-option').filter({ has: page.getByText(target.word, { exact: true }) }).click();
   await expect(page.getByText('答對了', { exact: true })).toBeVisible();
-  await expect(page.locator('.detail-word-line h3')).toHaveText(target.word);
+  await expect(page.locator('.detail-word-line h3')).toHaveAccessibleName(target.word);
   await page.locator('.rating-button.good').click();
   await page.getByRole('button', { name: '結束這輪' }).click();
   await expect.poll(async () => (await storedState(page))?.reviews.length).toBe(2);

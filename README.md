@@ -1,4 +1,4 @@
-# 言葉の庭 · N3 日文單字與文法
+# 拾語手帖 · N3 日文單字與文法
 
 正式網站：[https://ty11-prog.github.io/japanese/](https://ty11-prog.github.io/japanese/)
 
@@ -7,6 +7,8 @@
 首版適合在單一裝置的 Chrome 使用，免登入、不需要後端或 API 金鑰。學習進度儲存在目前瀏覽器的 IndexedDB，不會上傳 GitHub 或其他雲端服務。
 
 ## 已提供的功能
+
+- 對外名稱為「拾語手帖」；主要內文與操作文字已調大，單字標題採對位假名。詳見 [名稱與閱讀排版](docs/readability.md)。
 
 - 獨立「文法練習」分頁：30 項文法、60 句假名例句及 90 題原創句意／接續／語境練習；逐題解說、每日推薦最多 6 新題與到期優先，每輪錯題最多加練一次。
 - 文法與單字進度分開保存、各自 JSON 備份；共用假名與語音偏好。可從單字約 10 分鐘、文法約 5 分鐘開始，詳見 [文法內容與學習方式](docs/grammar-content.md)。
@@ -89,6 +91,7 @@ src/styles.css              手機優先的響應式樣式
 src/data/vocabulary.ts      原有 100 詞與完整詞庫入口
 src/data/expansion/         新增 200 詞及對應例句假名
 src/data/quiz-exclusions.ts  近義詞干擾選項排除組
+src/data/headword-readings.ts 全部 300 詞的標題假名對位
 src/data/grammar/           30 項文法、60 例句、90 題及假名
 src/components/GrammarPage.tsx 文法說明、練習與獨立備份
 src/lib/grammar.ts          文法逐題排程與統計
