@@ -931,13 +931,13 @@ export const vocabulary: Word[] = [
     "id": "tashikameru",
     "word": "確かめる",
     "reading": "たしかめる",
-    "meaning": "查明；親自確認",
+    "meaning": "確認；查明",
     "partOfSpeech": "他動詞・一段動詞",
     "example": "出かける前に、鍵をかけたか確かめました。",
     "translation": "出門前，我確認了是否已經鎖門。",
     "collocation": "安全を確かめる",
     "category": "動作表達",
-    "note": "與「確認する」意思接近，常強調實際查驗是否正確。"
+    "note": "透過查驗或詢問，使不確定的事情明確；與「確認する」意思接近，不限於親眼查看。"
   },
   {
     "id": "mitomeru",
