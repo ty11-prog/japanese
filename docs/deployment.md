@@ -20,10 +20,11 @@
 
 ## 工作流程內容
 
-- `build`：取出原始碼、依 `.nvmrc` 安裝 Node.js 24、`npm ci`、`npm test`、`npm run build`，上傳 `dist` 成品。
+- `build`：取出原始碼、依 `.nvmrc` 安裝 Node.js 24、`npm ci`、`npm run audit:security`、`npm test`、`npm run build`，封裝並上傳 `dist` 成品。Actions 固定完整 commit SHA。
 - `deploy`：在建置成功後，將成品部署到 GitHub Pages。
 - 建置工作僅具有 `contents: read`；部署工作具有 `pages: write` 與 `id-token: write`。若儲存庫為 `github-pages` 環境設定了審批規則，仍須遵循該規則。
 - 此部署流程未包含瀏覽器端對端測試。發布前可另在支援 Chromium 的開發環境執行 `npm run test:e2e`。
+- 安全掃描只允許已記錄的固定版本 deepmerge 低風險例外；新通報或掃描失敗會中止發布。CSP 與 GitHub Pages 的防嵌入標頭限制見 [安全說明](security.md)。
 
 Vite 使用相對資產路徑 `base: './'`，manifest 的啟動路徑及 scope 也是相對目前目錄，支援一般的 GitHub Pages 專案子路徑。若變更自訂網域、網站路徑或其他部署平台，請重新檢查資產、Service Worker 範圍與離線重新載入。
 

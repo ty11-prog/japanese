@@ -55,6 +55,8 @@ npm run build
 npm run test:e2e
 ```
 
+安全掃描另執行 `npm run audit:security`。正式版限制外部資源與 iframe 中的互動操作，發布 Actions 固定完整 commit SHA，並以 Dependabot 持續提出更新。已知的 deepmerge 低風險通報及 GitHub Pages 標頭限制詳見 [網站安全防護與已知限制](docs/security.md)。
+
 單元測試涵蓋複習排程、每日新詞上限、同日重試、IndexedDB 讀寫與備份驗證。瀏覽器測試使用桌面與手機尺寸，涵蓋主要學習流程、進度保存、備份、PWA 離線及基本無障礙檢查。自動化檢查不能取代實機 Chrome、實際語音與教材內容的人工驗證。
 
 端對端測試會自行建置並在獨立的 4175 埠啟動正式預覽服務，每輪使用新瀏覽器環境，不沿用開發預覽的舊成品。雲端開發環境優先使用現有的 `/usr/bin/chromium`；其他電腦可安裝 Playwright 管理的 Chromium：

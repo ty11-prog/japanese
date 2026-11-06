@@ -5,6 +5,23 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig({
   base: './',
   plugins: [
+    {
+      name: 'production-security-policy',
+      apply: 'build',
+      transformIndexHtml() {
+        return [
+          {
+            tag: 'meta',
+            attrs: {
+              'http-equiv': 'Content-Security-Policy',
+              content: "default-src 'self'; script-src 'self'; script-src-attr 'none'; style-src 'self'; style-src-attr 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'",
+            },
+            injectTo: 'head-prepend' as const,
+          },
+          { tag: 'meta', attrs: { name: 'referrer', content: 'no-referrer' }, injectTo: 'head-prepend' as const },
+        ];
+      },
+    },
     react(),
     VitePWA({
       registerType: 'prompt',

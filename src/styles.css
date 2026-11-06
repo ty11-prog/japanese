@@ -764,6 +764,8 @@ rt { font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans JP', sans-serif;
 .audio-button { flex-shrink: 0; }
 .headword-text { line-break: strict; overflow-wrap: break-word; }
 .headword-text ruby { ruby-align: space-around; }
+.embedded-notice { max-width: 36rem; margin: 12vh auto; padding: 24px; line-height: 1.8; }
+.embedded-notice a { display: inline-block; padding: 12px 0; }
 .headword-text rt { text-align: center; letter-spacing: 0; }
 .detail-word-line .headword-text rt { font-size: .42em; }
 .meaning-question .headword-text rt { font-size: .32em; }
