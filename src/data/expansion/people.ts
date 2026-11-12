@@ -25,10 +25,10 @@ export const peopleExpansion: (Word & { annotation: string })[] = [
   },
   {
     id: 'natsukashii', word: '懐かしい', reading: 'なつかしい', meaning: '令人懷念的', partOfSpeech: 'い形容詞',
-    example: 'この歌を聞くと、学生時代が懐かしいです。',
-    translation: '一聽到這首歌，我就懷念起學生時代。', collocation: '懐かしい思い出', category: '情緒人際',
+    example: 'この歌を聞くと、懐かしい学生時代を思い出します。',
+    translation: '一聽到這首歌，就會想起令人懷念的學生時代。', collocation: '懐かしい思い出', category: '情緒人際',
     note: '多用於熟悉的往事、人或場所引起的懷念感。',
-    annotation: 'この[歌|うた]を[聞|き]くと、[学生時代|がくせいじだい]が[懐|なつ]かしいです。',
+    annotation: 'この[歌|うた]を[聞|き]くと、[懐|なつ]かしい[学生時代|がくせいじだい]を[思|おも]い[出|だ]します。',
   },
   {
     id: 'hazukashii', word: '恥ずかしい', reading: 'はずかしい', meaning: '害羞的；難為情的', partOfSpeech: 'い形容詞',

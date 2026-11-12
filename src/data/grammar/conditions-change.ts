@@ -127,7 +127,8 @@ export const conditionsChangeGrammar: GrammarPoint[] = [
     "meaning": "只要……就……",
     "connection": [
       "名詞＋さえ＋動詞ば形",
-      "動詞ます形去掉ます＋さえすれば"
+      "動詞ます形去掉ます＋さえすれば",
+      "名詞＋さえ＋い形容詞ければ／な形容詞・名詞なら（如「天気さえよければ」「体さえ丈夫なら」）"
     ],
     "explanation": "把一個條件特別提出來，表示說話者認為只需滿足這項最低條件，後面的事情就能成立。",
     "caution": "這是說話者認為足以使結果成立的最低條件，不等於邏輯上的必要條件，也不是對現實世界的無條件保證。「さえ」的位置與後面動詞的條件形都要正確。",
@@ -409,14 +410,14 @@ export const conditionsChangeGrammar: GrammarPoint[] = [
       {
         "id": "grammar-toshitara-q2",
         "kind": "connection",
-        "instruction": "請用な形容詞「本当」的肯定普通形填空。",
+        "instruction": "「本当」可作名詞或な形容詞。請填入接在「としたら」前的肯定普通形。",
         "japanese": "その[情報|じょうほう]が（　）としたら、[早|はや]く[連絡|れんらく]したほうがいいです。",
         "optionLanguage": "ja",
         "options": [
           {
             "id": "a",
             "text": "[本当|ほんとう]な",
-            "explanation": "な是修飾名詞時的形式，這裡不是直接修飾名詞。"
+            "explanation": "「本当」修飾名詞時一般說「本当の話」，「本当な」並非標準形式；接「としたら」前也不用な。"
           },
           {
             "id": "b",
@@ -431,7 +432,7 @@ export const conditionsChangeGrammar: GrammarPoint[] = [
           {
             "id": "d",
             "text": "[本当|ほんとう]だ",
-            "explanation": "な形容詞的肯定普通形是語幹加だ。"
+            "explanation": "名詞或な形容詞的肯定普通形是加「だ」：本当だ。"
           }
         ],
         "answerId": "d",

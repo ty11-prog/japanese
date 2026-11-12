@@ -13,7 +13,7 @@ import FuriganaText from './components/FuriganaText';
 import HeadwordText from './components/HeadwordText';
 import './grammar.css';
 import { getJapaneseVoices, parseSpeechPreferences, pickJapaneseVoice, voiceKey, type SpeechPreferences } from './lib/speech';
-import { createInitialState, getStats, getStudyPlan, recordReview, updateSettings, type AppState, type Rating } from './lib/learning';
+import { createInitialState, getStats, getStudyPlan, isFamiliar, localDateKey, recordReview, updateSettings, type AppState, type Rating } from './lib/learning';
 import { exportBackup, loadState, parseBackup, saveState, StorageConflictError } from './lib/storage';
 import { canBeDistractor } from './lib/questions';
 
@@ -35,7 +35,7 @@ const tabs: { id: Tab; label: string; icon: typeof House }[] = [
 ];
 
 function localDay(date = new Date()) {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  return localDateKey(date);
 }
 function readableDate(value: string) {
   return new Date(value).toLocaleDateString('zh-TW', { month: 'numeric', day: 'numeric' });
@@ -43,14 +43,10 @@ function readableDate(value: string) {
 function dayLabel(date: Date) {
   return date.toLocaleDateString('zh-TW', { month: 'long', day: 'numeric', weekday: 'long' });
 }
-function isFamiliar(state: AppState, id: string) {
-  const item = state.progress[id];
-  return Boolean(item && item.intervalDays >= 7 && item.correctStreak >= 3);
-}
 function wordStatus(state: AppState, id: string) {
   const item = state.progress[id];
   if (!item) return '未開始';
-  if (isFamiliar(state, id)) return '較熟悉';
+  if (isFamiliar(item)) return '較熟悉';
   return '學習中';
 }
 function nextInterval(state: AppState, id: string, correct: boolean, rating: Rating, now: Date) {
