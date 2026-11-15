@@ -267,7 +267,18 @@ export default function App() {
   if (!state) return <div className="loading-screen"><div className="brand-mark"><Sprout size={28} /></div><p>正在打開你的單字手帖…</p></div>;
   const stats = getStats(state, wordIds, now);
   const plan = getStudyPlan(state, wordIds, now);
-  const studiedToday = new Set(state.reviews.filter((review) => localDay(new Date(review.reviewedAt)) === localDay(now)).map((review) => review.wordId)).size;
+  // Group the review log by local day once per render instead of rescanning it per chart bar.
+  const reviewsPerDay = new Map<string, number>();
+  const todayKey = localDay(now);
+  const studiedTodayIds = new Set<string>();
+  for (const review of state.reviews) {
+    const key = localDay(new Date(review.reviewedAt));
+    reviewsPerDay.set(key, (reviewsPerDay.get(key) ?? 0) + 1);
+    if (key === todayKey) studiedTodayIds.add(review.wordId);
+  }
+  const studiedToday = studiedTodayIds.size;
+  const lastSevenDays = Array.from({ length: 7 }, (_, index) => { const date = new Date(now); date.setDate(date.getDate() - 6 + index); return date; });
+  const weeklyMax = Math.max(8, ...lastSevenDays.map((date) => reviewsPerDay.get(localDay(date)) ?? 0));
   const todayTarget = Math.max(studiedToday, studiedToday + plan.queue.length, 1);
   const todayDone = plan.queue.length === 0;
   const nextTodayReview = Object.values(state.progress).filter((item) => new Date(item.dueAt) > now && localDay(new Date(item.dueAt)) === localDay(now)).sort((a, b) => a.dueAt.localeCompare(b.dueAt))[0];
@@ -334,7 +345,7 @@ export default function App() {
           <PageIntro eyebrow="SMALL STEPS, REAL PROGRESS" title="學習足跡" description="每一次想起來，都是記憶扎根的時候。" />
           <div className="progress-stats">{[{ icon: BookOpen, value: stats.seen, label: '已接觸的單字', suffix: ` / ${stats.total}` }, { icon: Sprout, value: stats.mastered, label: '較熟悉的單字', suffix: ' 詞' }, { icon: Flame, value: stats.streak, label: '連續學習', suffix: ' 天' }, { icon: CheckCircle2, value: stats.todayReviews, label: '今日練習次數', suffix: ' 次' }].map(({ icon: Icon, value, label, suffix }) => <div className="progress-stat" key={label}><Icon size={21} /><strong>{value}<small>{suffix}</small></strong><span>{label}</span></div>)}</div>
           <div className="progress-grid"><section className="surface weekly-card"><div className="section-heading"><h2>這一週的累積</h2><span className="subtle-note">練習次數</span></div><div className="weekly-chart" aria-label="最近七天的練習次數">{Array.from({ length: 7 }, (_, index) => {
-            const date = new Date(now); date.setDate(date.getDate() - 6 + index); const count = state.reviews.filter((review) => localDay(new Date(review.reviewedAt)) === localDay(date)).length; const max = Math.max(8, ...Array.from({ length: 7 }, (_, d) => { const day = new Date(now); day.setDate(day.getDate() - d); return state.reviews.filter((r) => localDay(new Date(r.reviewedAt)) === localDay(day)).length; }));
+            const date = lastSevenDays[index]; const count = reviewsPerDay.get(localDay(date)) ?? 0; const max = weeklyMax;
             return <div className={`chart-column ${index === 6 ? 'today' : ''}`} key={index} aria-label={`${readableDate(date.toISOString())} ${count} 次`}><span className="chart-count">{count}</span><div className="bar-track"><div className="bar-fill" style={{ height: `${count / max * 100}%`, minHeight: count ? 7 : 3 }} /></div><span>{index === 6 ? '今天' : date.toLocaleDateString('zh-TW', { weekday: 'short' }).replace('週', '')}</span></div>;
           })}</div></section><section className="surface memory-card"><span className="section-kicker">記憶需要時間，也需要重逢</span><h2>慢慢熟悉，<br />不急著全部記住。</h2><div className="memory-legend"><span><i className="legend-dot indigo" />較熟悉<strong>{stats.mastered}</strong></span><span><i className="legend-dot sage" />學習中<strong>{stats.seen - stats.mastered}</strong></span><span><i className="legend-dot beige" />未開始<strong>{stats.total - stats.seen}</strong></span></div><div className="memory-bar"><span style={{ width: `${stats.mastered / stats.total * 100}%` }} /><span style={{ width: `${(stats.seen - stats.mastered) / stats.total * 100}%` }} /></div><p>至少連續答對 3 次，且複習間隔達 7 天，才標記為較熟悉；仍會安排後續複習。</p></section></div>
           <section className="surface review-section"><div className="section-heading"><h2>值得再見一次的單字</h2><span className="subtle-note">答錯或想再練的詞</span></div>{vocabulary.filter((word) => state.progress[word.id]?.lapses > 0).length ? <div className="review-word-grid">{vocabulary.filter((word) => state.progress[word.id]?.lapses > 0).slice(0, 12).map((word) => <button className="review-word" key={word.id} onClick={() => setSelectedWord(word)}><span lang="ja">{word.word}</span><small>{word.meaning}</small><ChevronRight size={16} /></button>)}</div> : <div className="gentle-empty"><Flower2 size={31} /><p>{stats.seen ? '這裡會收集曾經答錯的詞，陪你慢慢熟悉。' : '開始第一輪練習，讓你的足跡從這裡長出來。'}</p><button className="text-button" onClick={() => startSession()}>開始今日學習<ArrowRight size={16} /></button></div>}</section>

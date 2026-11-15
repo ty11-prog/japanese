@@ -241,8 +241,8 @@ export const vocabulary: Word[] = [
     "reading": "よぶん",
     "meaning": "多餘；超出所需的部分",
     "partOfSpeech": "名詞・な形容詞",
-    "example": "旅行には、余分なお金を少し持っていきます。",
-    "translation": "旅行時我會多帶一點備用的錢。",
+    "example": "旅行には、余分にお金を持っていきます。",
+    "translation": "旅行時我會多帶一些備用的錢。",
     "collocation": "余分に用意する",
     "category": "日常生活",
     "note": "依情境可指不必要的多餘部分，也可指預備的額外份量。"
@@ -1153,12 +1153,12 @@ export const vocabulary: Word[] = [
     "word": "話し合う",
     "reading": "はなしあう",
     "meaning": "互相討論；商量",
-    "partOfSpeech": "他動詞・五段動詞",
+    "partOfSpeech": "自動詞・五段動詞",
     "example": "旅行の計画について、友人とゆっくり話し合いました。",
     "translation": "我和朋友仔細討論了旅行計畫。",
     "collocation": "計画について話し合う",
     "category": "動作表達",
-    "note": "表示彼此交換意見；單方面告知通常用「話す」「伝える」。"
+    "note": "表示彼此交換意見，常用「〜と〜について話し合う」；也可說「問題を話し合う」。單方面告知通常用「話す」「伝える」。"
   },
   ...expandedVocabulary.map(({ annotation: _annotation, ...word }) => word)
 ];

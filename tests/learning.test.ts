@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   createInitialState, getStats, getStudyPlan, isFamiliar, localDateKey,
-  recordReview, updateSettings,
+  MAX_STORED_REVIEWS, recordReview, updateSettings,
 } from '../src/lib/learning';
 
 const now = new Date('2026-10-25T04:00:00.000Z');
@@ -146,5 +146,19 @@ describe('retrieval-based spaced repetition', () => {
     expect(() => updateSettings(state, { dailyMinutes: 500 })).toThrow();
     expect(() => recordReview(state, '__proto__', true, 'good', now)).toThrow();
     expect(() => recordReview(state, 'constructor', true, 'good', now)).toThrow();
+  });
+});
+
+describe('review log size', () => {
+  it('keeps only the newest records so stored progress stays within the backup limit', () => {
+    const base = createInitialState(new Date('2026-01-01T00:00:00.000Z'));
+    const filler = Array.from({ length: MAX_STORED_REVIEWS }, (_, index) => ({
+      id: `old-${index}`, wordId: 'shitaku', reviewedAt: '2026-01-01T00:00:00.000Z',
+      correct: true, rating: 'good' as const, intervalDays: 1,
+    }));
+    const next = recordReview({ ...base, reviews: filler }, 'shitaku', true, 'good', new Date('2026-01-02T00:00:00.000Z'));
+    expect(next.reviews).toHaveLength(MAX_STORED_REVIEWS);
+    expect(next.reviews[0].id).toBe('old-1');
+    expect(next.reviews.at(-1)?.reviewedAt).toBe('2026-01-02T00:00:00.000Z');
   });
 });

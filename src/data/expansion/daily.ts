@@ -483,7 +483,7 @@ export const dailyExpansion: (Word & { annotation: string })[] = [
     "translation": "冬天空氣乾燥，所以喉嚨容易痛。",
     "collocation": "空気が乾燥する",
     "category": "日常生活",
-    "note": "可指自然變乾，也可指把東西弄乾，例如「洗濯物を乾燥する」。",
+    "note": "可指自然變乾，也可指把東西弄乾，例如「洗濯物を乾燥させる」；「乾燥機で乾燥する」也常見。",
     "annotation": "[冬|ふゆ]は[空気|くうき]が[乾燥|かんそう]するので、のどが[痛|いた]くなりやすいです。"
   },
   {
