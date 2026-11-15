@@ -46,6 +46,9 @@ export interface StudyPlan {
 
 export const DEFAULT_SETTINGS: AppSettings = { dailyNewLimit: 8, dailyMinutes: 15 };
 export const REVIEW_INTERVALS = [1, 3, 7, 14, 30, 60, 90, 180] as const;
+/** Keep the activity log bounded. Scheduling uses `progress`, not this log, and
+ * backups reject more than 100,000 records, so only the newest entries are kept. */
+export const MAX_STORED_REVIEWS = 50_000;
 const MINUTE = 60_000;
 const DAY = 24 * 60 * MINUTE;
 const VALID_ID = /^[a-z0-9][a-z0-9_-]{0,63}$/;
@@ -134,7 +137,7 @@ export function recordReview(
   return {
     ...state,
     progress: { ...state.progress, [wordId]: progress },
-    reviews: [...state.reviews, review],
+    reviews: [...state.reviews.slice(-(MAX_STORED_REVIEWS - 1)), review],
     updatedAt: timestamp,
   };
 }

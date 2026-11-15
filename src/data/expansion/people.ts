@@ -25,10 +25,10 @@ export const peopleExpansion: (Word & { annotation: string })[] = [
   },
   {
     id: 'natsukashii', word: '懐かしい', reading: 'なつかしい', meaning: '令人懷念的', partOfSpeech: 'い形容詞',
-    example: 'この歌を聞くと、学生時代が懐かしいです。',
-    translation: '一聽到這首歌，我就懷念起學生時代。', collocation: '懐かしい思い出', category: '情緒人際',
+    example: 'この歌を聞くと、懐かしい学生時代を思い出します。',
+    translation: '一聽到這首歌，就會想起令人懷念的學生時代。', collocation: '懐かしい思い出', category: '情緒人際',
     note: '多用於熟悉的往事、人或場所引起的懷念感。',
-    annotation: 'この[歌|うた]を[聞|き]くと、[学生時代|がくせいじだい]が[懐|なつ]かしいです。',
+    annotation: 'この[歌|うた]を[聞|き]くと、[懐|なつ]かしい[学生時代|がくせいじだい]を[思|おも]い[出|だ]します。',
   },
   {
     id: 'hazukashii', word: '恥ずかしい', reading: 'はずかしい', meaning: '害羞的；難為情的', partOfSpeech: 'い形容詞',
@@ -105,21 +105,21 @@ export const peopleExpansion: (Word & { annotation: string })[] = [
     annotation: '[楽|たの]しみにしていた[旅行|りょこう]が[中止|ちゅうし]になって、がっかりしました。',
   },
   {
-    id: 'ochitsuku', word: '落ち着く', reading: 'おちつく', meaning: '冷靜下來；安定下來', partOfSpeech: '五段動詞・自動詞',
+    id: 'ochitsuku', word: '落ち着く', reading: 'おちつく', meaning: '冷靜下來；安定下來', partOfSpeech: '自動詞・五段動詞',
     example: '緊張したときは、深く息をして落ち着くようにしています。',
     translation: '緊張的時候，我會試著深呼吸，讓自己冷靜下來。', collocation: '気持ちが落ち着く', category: '情緒人際',
     note: '使某人或某物安定下來的他動詞是「落ち着かせる」。',
     annotation: '[緊張|きんちょう]したときは、[深|ふか]く[息|いき]をして[落|お]ち[着|つ]くようにしています。',
   },
   {
-    id: 'awateru', word: '慌てる', reading: 'あわてる', meaning: '慌張；驚慌失措', partOfSpeech: '一段動詞・自動詞',
+    id: 'awateru', word: '慌てる', reading: 'あわてる', meaning: '慌張；驚慌失措', partOfSpeech: '自動詞・一段動詞',
     example: '急に予定が変わっても、慌てる必要はありません。',
     translation: '即使行程突然改變，也不需要慌張。', collocation: '慌てずに行動する', category: '情緒人際',
     note: '「慌てて出かける」也可表示匆忙出門。',
     annotation: '[急|きゅう]に[予定|よてい]が[変|か]わっても、[慌|あわ]てる[必要|ひつよう]はありません。',
   },
   {
-    id: 'odoroku', word: '驚く', reading: 'おどろく', meaning: '驚訝；吃驚', partOfSpeech: '五段動詞・自動詞',
+    id: 'odoroku', word: '驚く', reading: 'おどろく', meaning: '驚訝；吃驚', partOfSpeech: '自動詞・五段動詞',
     example: '急に声をかけられると、驚くことがあります。',
     translation: '突然被人搭話時，我有時會嚇一跳。', collocation: '知らせに驚く', category: '情緒人際',
     note: '令人驚訝、嚇到別人時，用他動詞「驚かす」或「驚かせる」。',
@@ -172,7 +172,7 @@ export const peopleExpansion: (Word & { annotation: string })[] = [
     annotation: '[弟|おとうと]と[小|ちい]さなことで[喧嘩|けんか]をしてしまいました。',
   },
   {
-    id: 'tsukiau', word: '付き合う', reading: 'つきあう', meaning: '交往；陪伴', partOfSpeech: '五段動詞・自動詞',
+    id: 'tsukiau', word: '付き合う', reading: 'つきあう', meaning: '交往；陪伴', partOfSpeech: '自動詞・五段動詞',
     example: '休みの日に、友人の買い物に付き合うことがあります。',
     translation: '放假時，我有時會陪朋友去買東西。', collocation: '買い物に付き合う', category: '情緒人際',
     note: '「人と付き合う」可指人際往來或戀愛交往；「買い物に付き合う」是陪人購物。',
@@ -249,7 +249,7 @@ export const peopleExpansion: (Word & { annotation: string })[] = [
     id: 'ijiwaru', word: '意地悪', reading: 'いじわる', meaning: '壞心眼；故意刁難', partOfSpeech: '名詞・な形容詞',
     example: '弟に意地悪をしてしまったので、すぐに謝りました。',
     translation: '我故意捉弄了弟弟，所以立刻向他道歉。', collocation: '人に意地悪をする', category: '情緒人際',
-    note: '強調故意讓別人不愉快，不等於中文單純的「固執」。',
+    note: '強調故意讓別人不愉快，與表示固執、逞強的「意地を張る」不同。',
     annotation: '[弟|おとうと]に[意地悪|いじわる]をしてしまったので、すぐに[謝|あやま]りました。',
   },
   {
